@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  # Эмулятор банковских сервисов
+  gate-simulator:
+    image: node:18-alpine
+    container_name: gate-simulator
+    ports:
+      - '9999:9999'
+    working_dir: /opt/gate-simulator
+    volumes:
+      - ./gate-simulator:/opt/gate-simulator
+    command: npm start
+
+  # MySQL
+  mysql:
+    image: mysql:8.0.41
+    container_name: mysql-db
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=pass
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  # PostgreSQL
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres-db
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=pass
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
