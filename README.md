@@ -120,9 +120,9 @@ java -jar aqa-shop.jar -P:jdbc.url=jdbc:postgresql://localhost:5432/app -P:jdbc.
 
 | № | Описание | Серьезность | Ссылка |
 |---|----------|-------------|--------|
-| 1 | PostgreSQL: таблицы не создаются автоматически | Critical | [Issue #1] |
-| 2 | При DECLINED отображается сообщение "Успешно! Операция одобрена Банком" | Major | [Issue #2] |
-| 3 | При пустом CVC ошибка отображается у поля "Владелец" | Minor | [Issue #3] |
+| 1 | PostgreSQL: таблицы не создаются автоматически | Critical | [Issue #1](https://github.com/dimitrieva-vika/aqa-diploma/issues/1) |
+| 2 | При DECLINED отображается сообщение "Успешно! Операция одобрена Банком" | Major | [Issue #2](https://github.com/dimitrieva-vika/aqa-diploma/issues/2) |
+| 3 | При пустом CVC ошибка отображается у поля "Владелец" | Minor | [Issue #3](https://github.com/dimitrieva-vika/aqa-diploma/issues/3) |
 
 ## Остановка окружения
 
