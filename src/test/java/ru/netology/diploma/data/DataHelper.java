@@ -7,15 +7,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class DataHelper {
 
     private static final Faker faker = new Faker(new Locale("en"));
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/app";
-    private static final String DB_USER = "app";
-    private static final String DB_PASS = "pass";
+    private static final String DB_URL = System.getProperty("db.url", "jdbc:mysql://localhost:3306/app");
+    private static final String DB_USER = System.getProperty("db.user", "app");
+    private static final String DB_PASS = System.getProperty("db.password", "pass");
 
     private DataHelper() {}
 
@@ -28,11 +30,27 @@ public class DataHelper {
         String cvc;
     }
 
+    private static String getCurrentMonth() {
+        return LocalDate.now().format(DateTimeFormatter.ofPattern("MM"));
+    }
+
+    private static String getCurrentYear() {
+        return LocalDate.now().format(DateTimeFormatter.ofPattern("yy"));
+    }
+
+    private static String getNextMonth() {
+        return LocalDate.now().plusMonths(1).format(DateTimeFormatter.ofPattern("MM"));
+    }
+
+    private static String getNextYear() {
+        return LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+    }
+
     public static CardInfo getApprovedCard() {
         return new CardInfo(
                 "4444 4444 4444 4441",
-                "08",
-                "26",
+                getCurrentMonth(),
+                getCurrentYear(),
                 "Ivan Petrov",
                 "123"
         );
@@ -41,8 +59,28 @@ public class DataHelper {
     public static CardInfo getDeclinedCard() {
         return new CardInfo(
                 "4444 4444 4444 4442",
+                getNextMonth(),
+                getCurrentYear(),
+                "Ivan Petrov",
+                "123"
+        );
+    }
+
+    public static CardInfo getExpiredMonthCard() {
+        return new CardInfo(
+                "4444 4444 4444 4441",
+                "01",
+                "20",
+                "Ivan Petrov",
+                "123"
+        );
+    }
+
+    public static CardInfo getExpiredYearCard() {
+        return new CardInfo(
+                "4444 4444 4444 4441",
                 "08",
-                "26",
+                "20",
                 "Ivan Petrov",
                 "123"
         );

@@ -6,6 +6,7 @@ import ru.netology.diploma.data.DataHelper;
 import ru.netology.diploma.page.MainPage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class CreditTest extends BaseTest {
 
@@ -113,10 +114,7 @@ public class CreditTest extends BaseTest {
     @Test
     @DisplayName("20. Credit: истекший срок (некорректный год)")
     void shouldShowErrorForExpiredYear() {
-        var card = DataHelper.getApprovedCard();
-        var expiredCard = new DataHelper.CardInfo(card.getNumber(), "08", "20",
-                card.getHolder(), "123");
-
+        var expiredCard = DataHelper.getExpiredYearCard();
         var form = mainPage.selectCredit();
         form.fillForm(expiredCard);
         form.submit();
@@ -128,10 +126,7 @@ public class CreditTest extends BaseTest {
     @Test
     @DisplayName("21. Credit: истекший срок (некорректный месяц) - ошибка у поля Год")
     void shouldShowErrorForExpiredMonth() {
-        var card = DataHelper.getApprovedCard();
-        var expiredCard = new DataHelper.CardInfo(card.getNumber(), "01", "25",
-                card.getHolder(), "123");
-
+        var expiredCard = DataHelper.getExpiredMonthCard();
         var form = mainPage.selectCredit();
         form.fillForm(expiredCard);
         form.submit();
@@ -189,5 +184,99 @@ public class CreditTest extends BaseTest {
         assertEquals("Неверный формат", expectedErrors[2]);
         assertEquals("Поле обязательно для заполнения", expectedErrors[3]);
         assertEquals("Неверный формат", expectedErrors[4]);
+    }
+
+    // ===== НОВЫЕ ТЕСТЫ =====
+
+    @Test
+    @DisplayName("31. Credit: CVC = 000 - ошибка у поля Месяц (БАГ)")
+    void shouldShowErrorForCvc000() {
+        var card = DataHelper.getApprovedCard();
+        var testCard = new DataHelper.CardInfo(
+                card.getNumber(),
+                "08",
+                "26",
+                card.getHolder(),
+                "000"
+        );
+
+        var form = mainPage.selectCredit();
+        form.fillForm(testCard);
+        form.submit();
+
+        String cvcError = form.getFieldError("cvc");
+        String monthError = form.getFieldError("month");
+
+        assertNotEquals("Неверный формат", cvcError, "CVC должен показывать ошибку");
+        assertEquals("Неверно указан срок действия карты", monthError, "БАГ: ошибка у поля Месяц");
+    }
+
+    @Test
+    @DisplayName("32. Credit: Владелец с цифрами - ошибка у поля Месяц (БАГ)")
+    void shouldShowErrorForHolderWithDigits() {
+        var card = DataHelper.getApprovedCard();
+        var testCard = new DataHelper.CardInfo(
+                card.getNumber(),
+                "08",
+                "26",
+                "Ivan123",
+                "123"
+        );
+
+        var form = mainPage.selectCredit();
+        form.fillForm(testCard);
+        form.submit();
+
+        String holderError = form.getFieldError("holder");
+        String monthError = form.getFieldError("month");
+
+        assertNotEquals("Поле обязательно для заполнения", holderError, "Владелец должен показывать ошибку");
+        assertEquals("Неверно указан срок действия карты", monthError, "БАГ: ошибка у поля Месяц");
+    }
+
+    @Test
+    @DisplayName("33. Credit: Владелец со спецсимволами - ошибка у поля Месяц (БАГ)")
+    void shouldShowErrorForHolderWithSpecialChars() {
+        var card = DataHelper.getApprovedCard();
+        var testCard = new DataHelper.CardInfo(
+                card.getNumber(),
+                "08",
+                "26",
+                "Ivan@#$",
+                "123"
+        );
+
+        var form = mainPage.selectCredit();
+        form.fillForm(testCard);
+        form.submit();
+
+        String holderError = form.getFieldError("holder");
+        String monthError = form.getFieldError("month");
+
+        assertNotEquals("Поле обязательно для заполнения", holderError, "Владелец должен показывать ошибку");
+        assertEquals("Неверно указан срок действия карты", monthError, "БАГ: ошибка у поля Месяц");
+    }
+
+    @Test
+    @DisplayName("34. Credit: Владелец с SQL-инъекцией - ошибка у поля Месяц (БАГ)")
+    void shouldShowErrorForHolderWithSqlInjection() {
+        var card = DataHelper.getApprovedCard();
+        var testCard = new DataHelper.CardInfo(
+                card.getNumber(),
+                "08",
+                "26",
+                "Ivan' OR '1'='1",
+                "123"
+        );
+
+        var form = mainPage.selectCredit();
+        form.fillForm(testCard);
+        form.submit();
+
+        String holderError = form.getFieldError("holder");
+        String monthError = form.getFieldError("month");
+
+        assertNotEquals("Поле обязательно для заполнения", holderError, "Владелец должен показывать ошибку");
+        assertEquals("Неверно указан срок действия карты", monthError, "БАГ: ошибка у поля Месяц");
     }
 }

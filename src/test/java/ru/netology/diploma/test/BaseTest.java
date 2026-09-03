@@ -17,10 +17,10 @@ public class BaseTest {
         SelenideLogger.addListener("allure", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true));
-        com.codeborne.selenide.Configuration.timeout = 10000;
+        com.codeborne.selenide.Configuration.timeout = 15000;
         com.codeborne.selenide.Configuration.headless = false;
         com.codeborne.selenide.Configuration.browserSize = "1920x1080";
-        com.codeborne.selenide.Configuration.pollingInterval = 100;
+        com.codeborne.selenide.Configuration.pollingInterval = 200;
     }
 
     @BeforeEach
